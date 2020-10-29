@@ -15,37 +15,53 @@ class App extends React.Component {
     }
   }
 
-  componentDidMount () {
-    fetch('/api/pets')
-    .then(res => res.json())
-    .then(pets => {
-      this.setState({
-        pets: pets
-      })
+  onChangeType = (animalType) => {
+    // console.log(animalType)
+    this.setState({
+      filters: {
+        type: animalType
+      }
     })
   }
 
+  onFindPetsClick = () => {
+    let url = '/api/pets'
+    if(this.state.filters.type === "all") {
+      fetch(url)
+      .then(res => res.json())
+      .then( filteredPets => this.setState({
+        pets: filteredPets
+      }) )
+    } else {
+      fetch(url + `?type=${this.state.filters.type}`)
+      .then(res => res.json())
+      .then(filteredPets => this.setState({
+        pets: filteredPets
+      }))
+    }
+  }
+
   onAdoptPet = (id) => {
-    let newPetArray = this.state.pets.map(pet => {
+
+    // let petState = [...this.state.pets]
+    // let petToFind = petState.find(pet => pet.id == id)
+    // petToFind.isAdopted = true
+    // this.setState({
+    //   pets: petState 
+    // })
+
+    let newPetArray = [...this.state.pets.map(pet => {
       if(pet.id === id) {
         // console.log(pet)
         return {...pet, isAdopted: true}
       } else {
         return pet 
       }
-    })
+    })]
     // console.log(newPetArray)
     this.setState({  
       pets: newPetArray 
     }) 
-  }
-
-  onFindPetsClick = (type) => {
-    console.log(type)
-  }
-
-  onChangeType = () => {
-    // fetch request
   }
 
 
